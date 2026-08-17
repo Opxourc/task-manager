@@ -1,17 +1,30 @@
 ﻿using task_manager.Models;
+using task_manager.Shared;
+using task_manager.Database;
 using TaskModel = task_manager.Models.Task;
 using TaskStatusModel = task_manager.Models.TaskStatus;
+using System.Text.Json;
 
 class Program
 {
     private static List<TaskModel> tasks = new();
     private static int nextId = 1;
+    private static string fileName = "Tasks.json";
 
     static void Main()
     {
         Console.WriteLine("╔════════════════════════════════════════╗");
         Console.WriteLine("║     Welcome to Task Manager CLI        ║");
         Console.WriteLine("╚════════════════════════════════════════╝\n");
+
+        var jsonOptions = new JsonSerializerOptions
+        {
+            WriteIndented = true
+        };
+
+        // Load tasks from file, or initialize empty list if file doesn't exist
+        var loadedTasks = JSONManager.Deserialize<List<TaskModel>>(fileName);
+        tasks = loadedTasks ?? new List<TaskModel>();
 
         bool isRunning = true;
         while (isRunning)
@@ -22,6 +35,7 @@ class Program
         }
 
         Console.WriteLine("\nThank you for using Task Manager. Goodbye!");
+        JSONManager.Serialize(fileName, tasks, jsonOptions);
     }
 
     static void DisplayMenu()
@@ -46,7 +60,7 @@ class Program
             case "3":
                 return false;
             default:
-                ColorConsoleText("❌ Invalid choice. Please try again.", ConsoleColor.Red);
+                ConsoleUtility.ColorConsoleText("❌ Invalid choice. Please try again.", ConsoleColor.Red);
                 return true;
         }
     }
@@ -60,7 +74,7 @@ class Program
 
         if (string.IsNullOrWhiteSpace(title))
         {
-            ColorConsoleText("❌ Task title cannot be empty.", ConsoleColor.Red);
+            ConsoleUtility.ColorConsoleText("❌ Task title cannot be empty.", ConsoleColor.Red);
             return;
         }
 
@@ -77,7 +91,7 @@ class Program
         };
 
         tasks.Add(newTask);
-        ColorConsoleText($"✅ Task added successfully! (ID: {newTask.Id})", ConsoleColor.Green);
+        ConsoleUtility.ColorConsoleText($"✅ Task added successfully! (ID: {newTask.Id})", ConsoleColor.Green);
     }
 
     static void ViewTasks()
@@ -86,7 +100,7 @@ class Program
 
         if (tasks.Count == 0)
         {
-            ColorConsoleText("No tasks yet. Add one to get started!", ConsoleColor.Yellow);
+            ConsoleUtility.ColorConsoleText("No tasks yet. Add one to get started!", ConsoleColor.Yellow);
             return;
         }
 
@@ -101,16 +115,5 @@ class Program
             if (!string.IsNullOrEmpty(task.Description))
                 Console.WriteLine($"    Description: {task.Description}");
         }
-    }
-
-    /// <summary>
-    /// Writes the provided text to the Console with it being colored in a specific color.
-    /// When a custom color is applied, the ForegroundColor is reset back to being gray after the text has been printed.
-    /// </summary>
-    static void ColorConsoleText(string text, System.ConsoleColor color)
-    {
-        Console.ForegroundColor = color;
-        Console.WriteLine(text);
-        Console.ForegroundColor = ConsoleColor.Gray;
     }
 }
