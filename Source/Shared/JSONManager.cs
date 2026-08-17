@@ -1,7 +1,6 @@
-namespace task_manager.Database
+namespace task_manager.Shared
 {
     using System.Text.Json;
-    using task_manager.Shared;
 
     public class JSONManager
     {
@@ -17,7 +16,7 @@ namespace task_manager.Database
             try
             {
                 var json = JsonSerializer.Serialize(data, options);
-                File.WriteAllText(fileName, json);
+                File.WriteAllText($"Data/{fileName}", json);
 
                 ConsoleUtility.ColorConsoleText(
                     $"✅ Successfully saved tasks to {fileName}",
