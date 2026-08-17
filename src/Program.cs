@@ -18,7 +18,6 @@ class Program
         {
             DisplayMenu();
             string? input = Console.ReadLine();
-
             isRunning = HandleCommand(input);
         }
 
@@ -47,7 +46,7 @@ class Program
             case "3":
                 return false;
             default:
-                Console.WriteLine("Invalid choice. Please try again.");
+                ColorConsoleText("❌ Invalid choice. Please try again.", ConsoleColor.Red);
                 return true;
         }
     }
@@ -61,7 +60,7 @@ class Program
 
         if (string.IsNullOrWhiteSpace(title))
         {
-            Console.WriteLine("❌ Task title cannot be empty.");
+            ColorConsoleText("❌ Task title cannot be empty.", ConsoleColor.Red);
             return;
         }
 
@@ -78,7 +77,7 @@ class Program
         };
 
         tasks.Add(newTask);
-        Console.WriteLine($"✓ Task added successfully! (ID: {newTask.Id})");
+        ColorConsoleText($"✅ Task added successfully! (ID: {newTask.Id})", ConsoleColor.Green);
     }
 
     static void ViewTasks()
@@ -87,20 +86,31 @@ class Program
 
         if (tasks.Count == 0)
         {
-            Console.WriteLine("No tasks yet. Add one to get started!");
+            ColorConsoleText("No tasks yet. Add one to get started!", ConsoleColor.Yellow);
             return;
         }
 
+        Console.WriteLine($"\nTotal tasks: {tasks.Count}\n");
         foreach (var task in tasks)
         {
-            string statusIcon = task.Status == TaskStatusModel.Completed ? "✓" : "○";
-            Console.WriteLine($"{statusIcon} {task}");
-            if (!string.IsNullOrEmpty(task.Description))
-            {
-                Console.WriteLine($"   Description: {task.Description}");
-            }
-        }
+            string statusIcon = task.Status == TaskStatusModel.Completed ? "🟢" : "🔴";
+            Console.WriteLine($"\nTask ID: {task.Id}");
+            Console.WriteLine($"    Status: {statusIcon} {task.Status}");
+            Console.WriteLine($"    Created at: {task.CreatedAt}");
 
-        Console.WriteLine($"\nTotal tasks: {tasks.Count}");
+            if (!string.IsNullOrEmpty(task.Description))
+                Console.WriteLine($"    Description: {task.Description}");
+        }
+    }
+
+    /// <summary>
+    /// Writes the provided text to the Console with it being colored in a specific color.
+    /// When a custom color is applied, the ForegroundColor is reset back to being gray after the text has been printed.
+    /// </summary>
+    static void ColorConsoleText(string text, System.ConsoleColor color)
+    {
+        Console.ForegroundColor = color;
+        Console.WriteLine(text);
+        Console.ForegroundColor = ConsoleColor.Gray;
     }
 }
