@@ -6,7 +6,7 @@ namespace task_manager.Shared
         /// Writes the provided text to the Console with it being colored in a specific color.
         /// When a custom color is applied, the ForegroundColor is reset back to being gray after the text has been printed.
         /// </summary>
-        public static void ColorConsoleText(string text, System.ConsoleColor color)
+        public static void ColorConsoleText(string text, ConsoleColor color)
         {
             Console.ForegroundColor = color;
             Console.WriteLine(text);

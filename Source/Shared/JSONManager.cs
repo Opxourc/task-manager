@@ -11,33 +11,32 @@ namespace task_manager.Shared
         /// <returns>
         /// Represents the success or failure of the serialization.
         /// </returns>
-        public static bool Serialize<T>(string fileName, T data, JsonSerializerOptions? options)
+        public static bool Serialize<T>(string filePath, T data, JsonSerializerOptions? options)
         {
             try
             {
+                string fullFilePath = Path.GetFullPath(filePath);
+                string? directoryPath = Path.GetDirectoryName(fullFilePath);
+
+                if (directoryPath is not null)
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
                 var json = JsonSerializer.Serialize(data, options);
-                File.WriteAllText($"Data/{fileName}", json);
+                File.WriteAllText(fullFilePath, json);
 
                 ConsoleUtility.ColorConsoleText(
-                    $"✅ Successfully saved tasks to {fileName}",
+                    $"Successfully saved tasks to {fullFilePath}",
                     ConsoleColor.Green
                 );
 
                 return true;
             }
-            catch (JsonException exception)
+            catch (Exception ex)
             {
                 ConsoleUtility.ColorConsoleText(
-                    $"❌ Failed to serialize task data. {exception.Message}",
-                    ConsoleColor.Red
-                );
-
-                return false;
-            }
-            catch (IOException exception)
-            {
-                ConsoleUtility.ColorConsoleText(
-                    $"❌ Failed to write task data to file. {exception.Message}",
+                    $"Failed to serialize task data. {ex.Message}",
                     ConsoleColor.Red
                 );
 
@@ -49,27 +48,26 @@ namespace task_manager.Shared
         /// Deserializes the provided JSON file name to a typed object.
         /// If the file does not exist, returns a default empty instance.
         /// </summary>
-        /// <typeparam name="T">The type to deserialize into</typeparam>
         /// <returns>
         /// The deserialized object, or a default instance if file doesn't exist or deserialization fails.
         /// </returns>
-        public static T? Deserialize<T>(string fileName)
+        public static T? Deserialize<T>(string filePath)
         {
             // If file doesn't exist, return null (caller should handle with default)
-            if (!File.Exists(fileName))
+            if (!File.Exists(filePath))
             {
                 return default;
             }
 
             try
             {
-                string json = File.ReadAllText(fileName);
+                string json = File.ReadAllText(filePath);
                 return JsonSerializer.Deserialize<T>(json);
             }
             catch (JsonException exception)
             {
                 ConsoleUtility.ColorConsoleText(
-                    $"❌ Failed to deserialize task data. {exception.Message}",
+                    $"Failed to deserialize task data. {exception.Message}",
                     ConsoleColor.Red
                 );
 
@@ -78,7 +76,7 @@ namespace task_manager.Shared
             catch (IOException exception)
             {
                 ConsoleUtility.ColorConsoleText(
-                    $"❌ Failed to read task data from file. {exception.Message}",
+                    $"Failed to read task data from file. {exception.Message}",
                     ConsoleColor.Red
                 );
 

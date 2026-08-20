@@ -4,11 +4,20 @@ using Task = task_manager.Models.Task;
 using TaskList = task_manager.Models.TaskList;
 using Input = task_manager.Models.Input;
 using Json = System.Text.Json;
-using System.Runtime.InteropServices;
 
 class Program
 {
-    private const string fileName = "Tasks.json";
+    private static readonly string filePath = Path.GetFullPath(
+        Path.Combine(
+            AppContext.BaseDirectory,
+            "..",
+            "..",
+            "..",
+            "..",
+            "Data",
+            "Tasks.json"
+        )
+    );
 
     static void Main()
     {
@@ -19,7 +28,7 @@ class Program
         // Attempt to get saved JSON file and load the data into memory
         // If no data exists, use an empty table instead
         var jsonOptions = new Json.JsonSerializerOptions { WriteIndented = true };
-        var loadedTasks = JSONManager.Deserialize<List<Task>>(fileName);
+        var loadedTasks = JSONManager.Deserialize<List<Task>>(filePath);
         TaskList.LoadList(loadedTasks ?? Enumerable.Empty<Task>());
 
         // Display menu and grab input in what the user wants to do
@@ -34,7 +43,7 @@ class Program
 
         // Save all tasks currently in memory
         var tasks = TaskList.GetAllTasks();
-        JSONManager.Serialize(fileName, tasks, jsonOptions);
+        JSONManager.Serialize(filePath, tasks, jsonOptions);
         Console.WriteLine("\nThank you for using the Task Manager. Goodbye!");
     }
 
@@ -102,7 +111,7 @@ class Program
 
                     task.Status = inputs.Value.Status;
                     ConsoleUtility.ColorConsoleText(
-                        "✅ Task successfully updated status!",
+                        "Task successfully updated status!",
                         ConsoleColor.Green
                     );
                     return true;

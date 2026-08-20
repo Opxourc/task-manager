@@ -14,15 +14,19 @@ namespace task_manager.Models
 
             // Get the title, checking for invalid inputs
             Console.Write("Enter task title: ");
-            string? title = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(title))
+            string? title;
+            do
             {
-                ConsoleUtility.ColorConsoleText(
-                    "❌ Task title cannot be empty.",
-                     ConsoleColor.Red
-                );
-                return null;
+                title = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(title))
+                {
+                    ConsoleUtility.ColorConsoleText(
+                        "Invalid task title. Please enter a valid title.",
+                        ConsoleColor.Red
+                    );
+                }
             }
+            while (string.IsNullOrWhiteSpace(title));
 
             // Get a optional description, nulls and whitespaces are accepted here
             Console.Write("Enter task description (optional, press Enter to skip): ");
@@ -54,16 +58,16 @@ namespace task_manager.Models
 
             // Get the index of the task, handing failed parses in the process
             // For convience, show the tasks and their indexes
-            Console.Write("Enter the index the task you want to remove.");
             ForViewingTasks();
 
-            if (!int.TryParse(Console.ReadLine(), out int index))
+            Console.Write("\nEnter the index the task you want to remove.");
+            int index;
+            while (!int.TryParse(Console.ReadLine(), out index))
             {
                 ConsoleUtility.ColorConsoleText(
-                    "❌ Please enter a valid task index.",
+                    "Please enter a valid task index.",
                     ConsoleColor.Red
                 );
-                return null;
             }
 
             return index;
@@ -92,7 +96,7 @@ namespace task_manager.Models
             // For convience, show the tasks and their indexes
             ForViewingTasks();
 
-            Console.Write("Enter the index the task you want to change the status of: ");
+            Console.Write("\nEnter the index the task you want to change the status of: ");
             int index;
             while (!int.TryParse(Console.ReadLine(), out index)
                 || index > TaskList.GetAllTasks().Count)
@@ -138,13 +142,14 @@ namespace task_manager.Models
 
             // Print the list in a format
             var list = TaskList.GetAllTasks();
-            Console.WriteLine($"\n{taskCount} Tasks\n");
+            Console.WriteLine($"Total tasks: {taskCount}");
             for (int i = 0; i < taskCount; i++)
             {
                 Task task = list[i];
                 string statusIcon = task.Status == TaskStatus.Completed ? "🟢" : "🔴";
 
                 Console.WriteLine($"\n{i}.");
+                Console.WriteLine($"    Title: {task.Title}");
                 Console.WriteLine($"    Status: {statusIcon} {task.Status}");
                 Console.WriteLine($"    Created at: {task.CreatedAt}");
 

@@ -5,24 +5,9 @@ namespace task_manager.Models
     /// </summary>
     public class Task
     {
-        /// <summary>
-        /// The title/name of the task
-        /// </summary>
         public required string Title { get; set; }
-
-        /// <summary>
-        /// Detailed description of the task
-        /// </summary>
         public string Description { get; set; } = string.Empty;
-
-        /// <summary>
-        /// Current status of the task (Pending or Completed)
-        /// </summary>
         public TaskStatus Status { get; set; } = TaskStatus.Pending;
-
-        /// <summary>
-        /// When the task was created
-        /// </summary>
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 
