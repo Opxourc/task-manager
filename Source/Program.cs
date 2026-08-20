@@ -4,6 +4,7 @@ using Task = task_manager.Models.Task;
 using TaskList = task_manager.Models.TaskList;
 using Input = task_manager.Models.Input;
 using Json = System.Text.Json;
+using System.Runtime.InteropServices;
 
 class Program
 {
@@ -42,9 +43,10 @@ class Program
         Console.WriteLine("\n--- Main Menu ---");
         Console.WriteLine("1. Add a new task");
         Console.WriteLine("2. Remove a task");
-        Console.WriteLine("3. View all tasks");
-        Console.WriteLine("4. Exit");
-        Console.Write("\nEnter your choice (1-4): ");
+        Console.WriteLine("3. Change status of a task");
+        Console.WriteLine("4. View all tasks");
+        Console.WriteLine("5. Exit");
+        Console.Write("\nEnter your choice (1-5): ");
     }
 
     static bool HandleCommand(string? input)
@@ -77,11 +79,40 @@ class Program
                     return true;
                 }
 
-            case "3": // View a task
+            case "3": // Change status of a task
+                {
+                    // Get values of inputs for changing the status of a task
+                    var inputs = Input.ForSettingStatusOnTask();
+                    if (inputs == null)
+                        return true;
+
+                    // Find the task and update the status if possible
+                    var task = TaskList.GetATask(inputs.Value.Index);
+                    if (task == null)
+                        return true;
+
+                    // If the status is the same as what the user wants, notify
+                    if (task.Status == inputs.Value.Status)
+                    {
+                        ConsoleUtility.ColorConsoleText(
+                            "The provided status is already set for this task!",
+                            ConsoleColor.DarkYellow
+                        );
+                    }
+
+                    task.Status = inputs.Value.Status;
+                    ConsoleUtility.ColorConsoleText(
+                        "✅ Task successfully updated status!",
+                        ConsoleColor.Green
+                    );
+                    return true;
+                }
+
+            case "4": // View a task
                 Input.ForViewingTasks();
                 return true;
 
-            case "4": // Exit program
+            case "5": // Exit program
                 return false;
 
             default:

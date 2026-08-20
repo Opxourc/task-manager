@@ -37,7 +37,7 @@ namespace task_manager.Models
 
             _tasks.Add(newTask);
             Shared.ConsoleUtility.ColorConsoleText(
-                $"✅ Task added successfully! (ID: {newTask.Id})",
+                $"✅ Task added successfully!",
                 ConsoleColor.Green
             );
         }
@@ -63,6 +63,11 @@ namespace task_manager.Models
                 $"✅ Task removed successfully!",
                 ConsoleColor.Green
             );
+        }
+
+        public static Task? GetATask(int index)
+        {
+            return _tasks[index];
         }
 
         public static IReadOnlyList<Task> GetAllTasks()

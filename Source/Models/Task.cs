@@ -6,11 +6,6 @@ namespace task_manager.Models
     public class Task
     {
         /// <summary>
-        /// Unique identifier for the task
-        /// </summary>
-        public int Id { get; set; }
-
-        /// <summary>
         /// The title/name of the task
         /// </summary>
         public required string Title { get; set; }
@@ -29,11 +24,6 @@ namespace task_manager.Models
         /// When the task was created
         /// </summary>
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-
-        public override string ToString()
-        {
-            return $"[{Id}] {Title} - {Status} (Created: {CreatedAt:yyyy-MM-dd HH:mm})";
-        }
     }
 
     /// <summary>

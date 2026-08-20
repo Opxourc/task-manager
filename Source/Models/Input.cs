@@ -69,6 +69,53 @@ namespace task_manager.Models
             return index;
         }
 
+        /// <summary>
+        /// Gets the input from the user that's needed for updating a task's status.
+        /// If no task are in the list that can have it's status updated, then a quick return and hint is printed instead.
+        /// </summary>
+        /// <returns></returns>
+        public static (int Index, TaskStatus Status)? ForSettingStatusOnTask()
+        {
+            // Check if there's any task to actually set status of
+            if (TaskList.GetAllTasks().Count <= 0)
+            {
+                ConsoleUtility.ColorConsoleText(
+                    "There's no task that can have it's status modified because no tasks are in the list.",
+                     ConsoleColor.DarkYellow
+                );
+                return null;
+            }
+
+            Console.WriteLine("\n--- Modify Status of Task ---");
+
+            // Get the index of the task, handling failed parses in the process
+            // For convience, show the tasks and their indexes
+            ForViewingTasks();
+
+            Console.Write("Enter the index the task you want to change the status of: ");
+            int index;
+            while (!int.TryParse(Console.ReadLine(), out index)
+                || index > TaskList.GetAllTasks().Count)
+            {
+                ConsoleUtility.ColorConsoleText(
+                    "❌ Please enter a valid task index.",
+                    ConsoleColor.Red
+                );
+            }
+
+            // Figure out which status to switch to
+            Console.Write("Enter what status you want to set the task to (Pending or Completed): ");
+            TaskStatus status;
+            while (!TaskStatus.TryParse(Console.ReadLine(), out status))
+            {
+                ConsoleUtility.ColorConsoleText(
+                    "❌ Please enter a status.",
+                    ConsoleColor.Red
+                );
+            }
+
+            return (index, status);
+        }
 
         /// <summary>
         /// Prints the entire list of tasks in a format with their information.
